@@ -27,6 +27,17 @@ class RedirectIfAuthenticated
             }
         }
 
+        // foreach ($guards as $guard) {
+        //     if (Auth::guard($guard)->check()) {
+        //         if (Auth::user()->role == 'admin') {
+        //             return redirect()->route('admin.dashboard.index');
+        //         } else {
+        //             return redirect()->route('client.appointment.index');
+        //         }
+        //     }
+        // }
+
+
         return $next($request);
     }
 }

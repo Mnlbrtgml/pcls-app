@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('processed_by');
             $table->string('name');
             $table->string('address');
-            $table->integer('number');
+            $table->string('number');
             $table->dateTime('pickup_date');
             $table->dateTime('scheduled_date');
             $table->dateTime('delivered_date');

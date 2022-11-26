@@ -1,0 +1,22 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Database\Factories\CustomerFactory;
+
+class CustomerSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $customer_factory = new CustomerFactory();
+        $customer_factory->count(5)
+        ->create();
+    }
+}

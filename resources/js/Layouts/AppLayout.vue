@@ -62,10 +62,12 @@ const logout = () => {
                                 <NavLink :href="route('customers.index')" :active="route().current('customers.index')">
                                     Customer
                                 </NavLink>
-                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                <NavLink :href="route('users.index')" :active="route().current('users.index')"
+                                    v-if="$page.props.user.role.includes('admin')">
                                     User
                                 </NavLink>
-                                <NavLink :href="route('reports.index')" :active="route().current('reports.index')">
+                                <NavLink :href="route('reports.index')" :active="route().current('reports.index')"
+                                    v-if="$page.props.user.role.includes('admin')">
                                     Report
                                 </NavLink>
                             </div>
@@ -145,7 +147,10 @@ const logout = () => {
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <button v-if="$page.props.jetstream.managesProfilePhotos"
-                                            class="pl-3 flex items-center gap-3 text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
+                                            class="pl-1 flex items-center gap-3 text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
+                                            <span class="bg-green-500 text-white px-2 py-1 text-xs rounded-full">{{
+                                                    $page.props.user.role
+                                            }}</span>
                                             <span>{{ $page.props.user.name }}</span>
                                             <img class="h-8 w-8 rounded-full object-cover"
                                                 :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name">
@@ -233,8 +238,7 @@ const logout = () => {
                             :active="route().current('customers.index')">
                             Customer
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('users.index')"
-                            :active="route().current('users.index')">
+                        <ResponsiveNavLink :href="route('users.index')" :active="route().current('users.index')">
                             User
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('reports.index')" :active="route().current('reports.index')">
