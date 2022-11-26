@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\TransactController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -50,5 +51,8 @@ Route::post('/transacts/store', [TransactController::class, 'store'])->name('tra
 
 Route::get('/schedules', [ScheduleController::class, 'Index'])->name('schedules.index');
 Route::post('/schedules/store', [ScheduleController::class, 'store'])->name('schedules.store');
+
+Route::get('/users', [UserController::class, 'Index'])->name('users.index');
+Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
 
 Route::get('/reports', [ReportController::class, 'Index'])->name('reports.index');
