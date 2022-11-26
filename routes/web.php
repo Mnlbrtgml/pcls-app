@@ -21,16 +21,16 @@ use Inertia\Inertia;
 */
 
 // Route::get('/', function () {
-//     return Inertia::render('Auth/Login');
+//     return Inertia::render('Welcome', [
+//         'canLogin' => Route::has('login'),
+//         'canRegister' => Route::has('register'),
+//         'laravelVersion' => Application::VERSION,
+//         'phpVersion' => PHP_VERSION,
+//     ]);
 // });
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Auth/Login');
 });
 
 Route::middleware([
@@ -41,18 +41,22 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::get('/', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+
+    Route::get('/customers', [CustomerController::class, 'Index'])->name('customers.index');
+    Route::post('/customers/store', [CustomerController::class, 'store'])->name('customers.store');
+
+    Route::get('/transacts', [TransactController::class, 'Index'])->name('transacts.index');
+    Route::post('/transacts/store', [TransactController::class, 'store'])->name('transacts.store');
+
+    Route::get('/schedules', [ScheduleController::class, 'Index'])->name('schedules.index');
+    Route::post('/schedules/store', [ScheduleController::class, 'store'])->name('schedules.store');
+
+    Route::get('/users', [UserController::class, 'Index'])->name('users.index');
+    Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
+
+    Route::get('/reports', [ReportController::class, 'Index'])->name('reports.index');
 });
-
-Route::get('/customers', [CustomerController::class, 'Index'])->name('customers.index');
-Route::post('/customers/store', [CustomerController::class, 'store'])->name('customers.store');
-
-Route::get('/transacts', [TransactController::class, 'Index'])->name('transacts.index');
-Route::post('/transacts/store', [TransactController::class, 'store'])->name('transacts.store');
-
-Route::get('/schedules', [ScheduleController::class, 'Index'])->name('schedules.index');
-Route::post('/schedules/store', [ScheduleController::class, 'store'])->name('schedules.store');
-
-Route::get('/users', [UserController::class, 'Index'])->name('users.index');
-Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
-
-Route::get('/reports', [ReportController::class, 'Index'])->name('reports.index');

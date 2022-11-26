@@ -13,6 +13,7 @@
                         <PrimaryButton>Download Transaction List</PrimaryButton>
                         <PrimaryButton>Download Scheduled Transaction List</PrimaryButton>
                         <PrimaryButton>Download Customer List</PrimaryButton>
+                        <PrimaryButton>Download User List</PrimaryButton>
                     </div>
                 </div>
             </div>

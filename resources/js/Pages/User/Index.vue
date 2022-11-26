@@ -52,16 +52,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="customer in customers" :key="customer.id"
+                                <tr v-for="user in users" :key="user.id"
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <td class="p-3">
-                                        {{ customer.name }}
-                                    </td>
-                                    <td class="p-3 whitespace-nowrap">
-                                        {{ customer.address }}
+                                        {{ user.name }}
                                     </td>
                                     <td class="p-3 text-center">
-                                        {{ customer.number }}
+                                        {{ user.role }}
+                                    </td>
+                                    <td class="p-3 text-center">
+                                        {{ user.email }}
                                     </td>
                                     <td class="py-4 px-6 flex items-center justify-center gap-3">
                                         <button class="text-blue-500">
@@ -94,32 +94,99 @@
         <Modal :show="showAddModal">
             <div>
                 <div>
-                    <form @submit.prevent="onAddSubmit" class="p-5 flex flex-col gap-3">
-                        <!-- <button type="submit">submit</button> -->
+                    <form @submit.prevent="onAddSubmit" class="p-5 flex flex-col gap-4">
 
-                        <div class="my-5 text-xl text-center font-bold">Create new customer</div>
+                        <div class="my-5 text-xl text-center font-bold">Create new user</div>
 
                         <div class="w-full px-5">
                             <InputLabel for="name" value="Name" />
-                            <TextInput id="name" type="text" class="w-full" v-model="form.name" />
-                            <InputError :message="form.errors.name" class="mt-1" />
+                            <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required
+                                autofocus autocomplete="name" />
+                            <InputError class="mt-2" :message="form.errors.name" />
+                        </div>
+
+                        <div class="w-full px-5 flex">
+                            <label class="flex items-center">
+                                <Checkbox v-model:checked="form.role" name="role" />
+                                <span class="ml-2 text-sm text-gray-600">Admin</span>
+                            </label>
                         </div>
 
                         <div class="w-full px-5">
-                            <InputLabel for="address" value="Address" />
-                            <TextInput id="address" type="text" class="w-full" v-model="form.address" />
-                            <InputError :message="form.errors.address" class="mt-1" />
+                            <InputLabel for="email" value="Email" />
+                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full"
+                                required />
+                            <InputError class="mt-2" :message="form.errors.email" />
                         </div>
 
                         <div class="w-full px-5">
-                            <InputLabel for="number" value="Number" />
-                            <TextInput id="number" type="number" class="w-full" v-model="form.number" />
-                            <InputError :message="form.errors.number" class="mt-1" />
+                            <InputLabel for="password" value="Password" />
+                            <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full"
+                                required autocomplete="new-password" />
+                            <InputError class="mt-2" :message="form.errors.password" />
+                        </div>
+
+                        <div class="w-full px-5">
+                            <InputLabel for="password_confirmation" value="Confirm Password" />
+                            <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
+                                class="mt-1 block w-full" required autocomplete="new-password" />
+                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
                         </div>
 
                         <div class="mt-10 px-5 flex justify-end gap-3">
                             <SecondaryButton @click="showAddModal = false">Cancel</SecondaryButton>
-                            <PrimaryButton type="submit">Add new customer</PrimaryButton>
+                            <PrimaryButton type="submit">Add new user</PrimaryButton>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Modal>
+
+        <Modal :show="showEditModal">
+            <div>
+                <div>
+                    <form @submit.prevent="onAddSubmit" class="p-5 flex flex-col gap-4">
+
+                        <div class="my-5 text-xl text-center font-bold">Edit</div>
+
+                        <div class="w-full px-5">
+                            <InputLabel for="name" value="Name" />
+                            <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required
+                                autofocus autocomplete="name" />
+                            <InputError class="mt-2" :message="form.errors.name" />
+                        </div>
+
+                        <div class="w-full px-5 flex">
+                            <label class="flex items-center">
+                                <Checkbox v-model:checked="form.role" name="role" />
+                                <span class="ml-2 text-sm text-gray-600">Role</span>
+                            </label>
+                        </div>
+
+                        <div class="w-full px-5">
+                            <InputLabel for="email" value="Email" />
+                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full"
+                                required />
+                            <InputError class="mt-2" :message="form.errors.email" />
+                        </div>
+
+                        <div class="w-full px-5">
+                            <InputLabel for="password" value="Password" />
+                            <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full"
+                                required autocomplete="new-password" />
+                            <InputError class="mt-2" :message="form.errors.password" />
+                        </div>
+
+                        <div class="w-full px-5">
+                            <InputLabel for="password_confirmation" value="Confirm Password" />
+                            <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
+                                class="mt-1 block w-full" required autocomplete="new-password" />
+                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                        </div>
+
+                        <div class="mt-10 px-5 flex justify-end gap-3">
+                            <SecondaryButton @click="showAddModal = false">Cancel</SecondaryButton>
+                            <PrimaryButton type="submit">Add new user</PrimaryButton>
                         </div>
                     </form>
                 </div>
@@ -136,6 +203,8 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import Checkbox from '@/Components/Checkbox.vue';
 
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/inertia-vue3';
@@ -152,16 +221,17 @@ const openAddModal = () => {
 }
 
 const form = useForm({
-    name: "",
-    role: "",
-    email: "",
-    password: "",
+    name: '',
+    role: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
 });
 
 const onAddSubmit = () => {
     form.post(route('users.store'), {
         onSuccess: () => {
-            form.reset();
+            form.reset('password', 'password_confirmation');
             showAddModal.value = false;
         }
     });

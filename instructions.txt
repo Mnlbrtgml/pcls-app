@@ -1,0 +1,22 @@
+Open your terminal then run this commands
+    composer install
+    npm install
+    php artisan key:generate
+
+Copy '.env.example' then paste to the same directory
+Rename '.env copy.example' to '.env'
+
+Open '.env' and change the environment variables corresponding to the following:
+    APP_NAME="Pure Clean Laundry Shop"
+    APP_URL=http://localhost:8000
+    DB_DATABASE=pcls
+
+Run this command to the terminal
+    php artisan migrate --seed --seeder=UserSeeder
+        *if you did not manully create a database named 'pcls' then the terminal will ask you if you want them to automatically create a new database named 'pcls'. You just have to type 'yes' or 'y'.
+    php artisan serve
+        *you can minimize this terminal but don't close or terminate it
+
+Open new terminal then run the commmand 'npm run dev' and minimize
+
+Click the link that will appear 'http://localhost:8000' or just copy this url and paste in your browser 

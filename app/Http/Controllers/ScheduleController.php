@@ -15,13 +15,11 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        // $schedule = Schedule::All();
+        $schedule = Schedule::All();
 
-        // return Inertia::render('Schedule/Index', [
-        //     'schedules' => $schedule
-        // ]);
-
-        return Inertia::render('Schedule/Index');
+        return Inertia::render('Schedule/Index', [
+            'schedules' => $schedule
+        ]);
     }
 
     /**
