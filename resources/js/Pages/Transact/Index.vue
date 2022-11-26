@@ -13,7 +13,7 @@
                         <div class="flex justify-between items-center py-4 bg-white dark:bg-gray-800">
                             <div class="ml-5">
                                 <PrimaryButton @click="openModal">
-                                    Add new transaction
+                                    Create new transaction
                                 </PrimaryButton>
                             </div>
                             <div class="mr-5">
@@ -109,7 +109,7 @@
             </div>
         </div>
 
-        <Modal :show="showModal">
+        <Modal :show="showCreateModal">
             <div>
                 <div>
                     <form @submit.prevent="onSubmit" class="p-5 flex flex-col gap-3">
@@ -159,10 +159,10 @@ import { ref } from 'vue';
 import { useForm } from '@inertiajs/inertia-vue3';
 
 defineProps({
-    'customers': Array,
+    'transacts': Array,
 })
 
-const showModal = ref(false);
+const showCreateModal = ref(false);
 
 const openModal = () => {
     form.reset();
