@@ -10,13 +10,10 @@ class Transact extends Model
     use HasFactory;
 
     protected $fillable = [
-        'processed_by',
         'name',
-        'address',
-        'number',
-        'pickup_date',
-        'scheduled_date',
-        'delivered_date',
-        'total'
+        'clothe_types',
+        'weight',
+        'total',
+        'status'
     ];
 }

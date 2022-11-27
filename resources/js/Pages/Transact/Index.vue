@@ -107,13 +107,6 @@
             <form @submit.prevent="onCreateSubmit" class="p-5 flex flex-col gap-3">
                 <div class="my-5 text-xl text-center font-bold uppercase">Create transaction</div>
 
-                <div class="w-full px-5 hidden">
-                    <InputLabel for="processed_by" value="Processed by" />
-                    <TextInput id="processed_by" type="text" class="w-full read-only:text-gray-500"
-                        v-model="createForm.processed_by" :value="$page.props.user.name" />
-                    <InputError :message="createForm.errors.processed_by" class="mt-1" />
-                </div>
-
                 <div class="w-full px-5">
                     <InputLabel for="name" value="Name" />
                     <TextInput id="name" type="text" class="w-full" v-model="createForm.name" />
@@ -139,8 +132,12 @@
                 </div>
 
                 <div class="w-full px-5">
-                    <InputLabel for="status" value="Status" />
-                    <TextInput id="status" type="text" class="w-full" v-model="createForm.status" />
+                    <label for="status"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                    <select id="status" v-model="createForm.status"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring focus:ring-indigo-200 focus:ring-opacity-50 focus:border-indigo-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option selected value="Processing">Processing</option>
+                    </select>
                     <InputError :message="createForm.errors.status" class="mt-1" />
                 </div>
 
@@ -231,7 +228,6 @@ defineProps({
 })
 
 const createForm = useForm({
-    processed_by: "",
     name: "",
     clothe_types: "",
     weight: "",

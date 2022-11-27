@@ -45,11 +45,11 @@ class TransactController extends Controller
             'name' => 'required',
             'clothe_types' => 'required',
             'weight' => 'required|numeric',
-            'total' => 'required|numeric'
+            'total' => 'required|numeric',
+            'status' => 'required',
         ]);
 
         $transaction = new Transact();
-        $transaction->processed_by = $request->processed_by;
         $transaction->name = $request->name;
         $transaction->clothe_types = $request->clothe_types;
         $transaction->weight = $request->weight;
@@ -91,7 +91,22 @@ class TransactController extends Controller
      */
     public function update(Request $request, Transact $transact)
     {
-        
+        $request->validate([
+            'name' => 'required',
+            'clothe_types' => 'required',
+            'weight' => 'required|numeric',
+            'total' => 'required|numeric'
+        ]);
+
+        $transact->update([
+            'name' => $request->name,
+            'clothe_types' => $request->clothe_types,
+            'weight' => $request->weight,
+            'total' => $request->total,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('transact.index');
     }
 
     /**
@@ -100,8 +115,9 @@ class TransactController extends Controller
      * @param  \App\Models\Transact  $transact
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Transact $transact)
+    public function destroy($transact)
     {
-        
+        $transact->delete();
+        return  redirect()->route('transact.index');
     }
 }

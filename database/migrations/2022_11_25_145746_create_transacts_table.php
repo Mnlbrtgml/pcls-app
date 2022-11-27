@@ -15,12 +15,11 @@ return new class extends Migration
     {
         Schema::create('transacts', function (Blueprint $table) {
             $table->id();
-            $table->string('processed_by');
             $table->string('name');
             $table->longText('clothe_types');
             $table->integer('weight');
             $table->integer('total');
-            $table->enum('status', ['Pending', 'Claimed'])->default('Pending');
+            $table->enum('status', ['Processing', 'Pending', 'Claimed'])->default('Processing');
             $table->timestamps();
         });
     }

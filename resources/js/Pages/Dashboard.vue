@@ -2,6 +2,13 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 
+const props = defineProps({
+    transaction_today_count: {
+        type: Number,
+        default: 0,
+    },
+});
+
 </script>
 
 <template>
@@ -27,11 +34,11 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
                     <div class="w-1/2 m-10 flex flex-col items-stretch justify-center gap-4">
                         <div class="bg-blue-50 w-full p-6 text-center space-y-3 rounded-lg">
                             <p>Number of Transaction Today</p>
-                            <p class="text-3xl font-bold">0</p>
+                            <p class="text-3xl font-bold"> {{ props.transaction_today_count }} </p>
                         </div>
                         <div class="bg-blue-50 w-full p-6 text-center space-y-3 rounded-lg">
                             <p>Total Profit Today</p>
-                            <p class="text-3xl font-bold">0</p>
+                            <p class="text-3xl font-bold"> {{ props.transaction_total }} </p>
                         </div>
                     </div>
                 </div>

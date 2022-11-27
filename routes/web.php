@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,9 +32,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'Index'])->name('dashboard');
 
     Route::get('/transacts', [TransactController::class, 'Index'])->name('transacts.index');
     Route::post('/transacts/store', [TransactController::class, 'store'])->name('transacts.store');
@@ -48,41 +47,4 @@ Route::middleware([
     Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
 
     Route::get('/reports', [ReportController::class, 'Index'])->name('reports.index');
-
-
-
-    // Route::group(['middleware' => ['role:admin']], function () {
-    //     Route::get('/dashboard', function () {
-    //         return Inertia::render('Dashboard');
-    //     })->name('dashboard');
-
-    //     Route::get('/transacts', [TransactController::class, 'Index'])->name('transacts.index');
-    //     Route::post('/transacts/store', [TransactController::class, 'store'])->name('transacts.store');
-
-    //     Route::get('/schedules', [ScheduleController::class, 'Index'])->name('schedules.index');
-    //     Route::post('/schedules/store', [ScheduleController::class, 'store'])->name('schedules.store');
-
-    //     Route::get('/customers', [CustomerController::class, 'Index'])->name('customers.index');
-    //     Route::post('/customers/store', [CustomerController::class, 'store'])->name('customers.store');
-
-    //     Route::get('/users', [UserController::class, 'Index'])->name('users.index');
-    //     Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
-
-    //     Route::get('/reports', [ReportController::class, 'Index'])->name('reports.index');
-    // });
-
-    // Route::group(['middleware' => ['role:staff']], function () {
-    //     Route::get('/dashboard', function () {
-    //         return Inertia::render('Dashboard');
-    //     })->name('dashboard');
-
-    //     Route::get('/transacts', [TransactController::class, 'Index'])->name('transacts.index');
-    //     Route::post('/transacts/store', [TransactController::class, 'store'])->name('transacts.store');
-
-    //     Route::get('/schedules', [ScheduleController::class, 'Index'])->name('schedules.index');
-    //     Route::post('/schedules/store', [ScheduleController::class, 'store'])->name('schedules.store');
-
-    //     Route::get('/customers', [CustomerController::class, 'Index'])->name('customers.index');
-    //     Route::post('/customers/store', [CustomerController::class, 'store'])->name('customers.store');
-    // });
 });
