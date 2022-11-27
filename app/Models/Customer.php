@@ -13,6 +13,5 @@ class Customer extends Model
         'name',
         'address',
         'number',
-        'current_transaction'
     ];
 }

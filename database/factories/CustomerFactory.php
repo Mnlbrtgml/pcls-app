@@ -20,7 +20,6 @@ class CustomerFactory extends Factory
             'name' => fake()->name(),
             'address' => fake()->address(),
             'number' => "09" . fake()->numberBetween(100000000, 999999999),
-            'current_transaction' => fake()->unique()->numberBetween(1, 5)
         ];
     }
 }

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('address');
             $table->string('number');
-            $table->string('current_transaction')->nullable();
             $table->timestamps();
         });
     }

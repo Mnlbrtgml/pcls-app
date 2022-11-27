@@ -42,9 +42,6 @@
                                         Number
                                     </th>
                                     <th scope="col" class="p-6 font-bold">
-                                        Current Transaction
-                                    </th>
-                                    <th scope="col" class="p-6 font-bold">
                                         Action
                                     </th>
                                 </tr>
@@ -60,9 +57,6 @@
                                     </td>
                                     <td class="p-3 text-center">
                                         {{ customer.number }}
-                                    </td>
-                                    <td class="p-3 text-center">
-                                        {{ customer.current_transaction }}
                                     </td>
                                     <td class="py-4 px-6 flex items-center justify-center gap-3">
                                         <button class="text-blue-500" @click="openUpdateModal(customer)">
@@ -115,13 +109,6 @@
                     <InputError :message="createForm.errors.number" class="mt-1" />
                 </div>
 
-                <div class="w-full px-5">
-                    <InputLabel for="current_transaction" value="Current transaction" />
-                    <TextInput id="current_transaction" type="text" class="w-full"
-                        v-model="createForm.current_transaction" disabled />
-                    <InputError :message="createForm.errors.current_transaction" class="mt-1" />
-                </div>
-
                 <div class="mt-10 px-5 flex justify-end gap-3">
                     <SecondaryButton @click="showCreateModal = false">Cancel</SecondaryButton>
                     <PrimaryButton type="submit">Save</PrimaryButton>
@@ -149,13 +136,6 @@
                     <InputLabel for="number" value="Number" />
                     <TextInput id="number" type="number" class="w-full" v-model="updateForm.number" />
                     <InputError :message="updateForm.errors.number" class="mt-1" />
-                </div>
-
-                <div class="w-full px-5">
-                    <InputLabel for="current_transaction" value="Current transaction" />
-                    <TextInput id="current_transaction" type="text" class="w-full"
-                        v-model="updateForm.current_transaction" />
-                    <InputError :message="updateForm.errors.current_transaction" class="mt-1" />
                 </div>
 
                 <div class="mt-10 px-5 flex justify-end gap-3">
@@ -207,14 +187,12 @@ const createForm = useForm({
     name: "",
     address: "",
     number: "",
-    current_transaction: "",
 });
 
 const updateForm = useForm({
     name: "",
     address: "",
     number: "",
-    current_transaction: "",
 });
 
 const showCreateModal = ref(false);
@@ -241,7 +219,6 @@ const openUpdateModal = (customer) => {
     updateForm.name = customer.name;
     updateForm.address = customer.address;
     updateForm.number = customer.number;
-    updateForm.current_transaction = customer.current_transaction;
 }
 
 const onUpdateSubmit = () => {
