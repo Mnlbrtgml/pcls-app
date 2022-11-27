@@ -12,8 +12,8 @@
                     <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
                         <div class="flex justify-between items-center py-4 bg-white dark:bg-gray-800">
                             <div class="ml-5">
-                                <PrimaryButton @click="openModal">
-                                    Create new transaction
+                                <PrimaryButton @click="openCreateModal">
+                                    Create transaction
                                 </PrimaryButton>
                             </div>
                             <div class="mr-5">
@@ -38,16 +38,7 @@
                                 class="text-xs text-gray-700 uppercase text-center bg-blue-50 dark:bg-blue-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" class="p-6 font-bold">
-                                        ID
-                                    </th>
-                                    <th scope="col" class="p-6 font-bold">
                                         Name
-                                    </th>
-                                    <th scope="col" class="p-6 font-bold">
-                                        Address
-                                    </th>
-                                    <th scope="col" class="p-6 font-bold">
-                                        Number
                                     </th>
                                     <th scope="col" class="p-6 font-bold">
                                         Type of clothes
@@ -61,28 +52,31 @@
                                     <th scope="col" class="p-6 font-bold">
                                         Status
                                     </th>
+                                    <th scope="col" class="p-6 font-bold">
+                                        Action
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="customer in customers" :key="customer.id"
+                                <tr v-for="transact in transacts" :key="transact.id"
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td class="p-3 text-center">
-                                        {{ customer.id }}
-                                    </td>
                                     <td class="p-3">
-                                        {{ customer.name }}
+                                        {{ transact.name }}
                                     </td>
                                     <td class="p-3 whitespace-nowrap">
-                                        {{ customer.address }}
+                                        {{ transact.clothe_types }}
                                     </td>
                                     <td class="p-3 text-center">
-                                        {{ customer.number }}
+                                        {{ transact.weight }}
                                     </td>
                                     <td class="p-3 text-center">
-                                        {{ customer.current_transaction }}
+                                        {{ transact.total }}
+                                    </td>
+                                    <td class="p-3 text-center">
+                                        {{ transact.status }}
                                     </td>
                                     <td class="py-4 px-6 flex items-center justify-center gap-3">
-                                        <button class="text-blue-500">
+                                        <button class="text-blue-500" @click="openUpdateModal(transact)">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -91,7 +85,8 @@
                                             </svg>
                                         </button>
 
-                                        <button class="text-red-500">
+                                        <button class="text-red-500" @click="openDeleteModal(transact)"
+                                            v-if="$page.props.user.permissions.includes('delete transaction')">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -101,7 +96,6 @@
                                         </button>
                                     </td>
                                 </tr>
-
                             </tbody>
                         </table>
                     </div>
@@ -110,38 +104,112 @@
         </div>
 
         <Modal :show="showCreateModal">
-            <div>
-                <div>
-                    <form @submit.prevent="onSubmit" class="p-5 flex flex-col gap-3">
-                        <!-- <button type="submit">submit</button> -->
+            <form @submit.prevent="onCreateSubmit" class="p-5 flex flex-col gap-3">
+                <div class="my-5 text-xl text-center font-bold uppercase">Create transaction</div>
 
-                        <div class="my-5 text-xl text-center font-bold">Create new customer</div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="name" value="Name" />
-                            <TextInput id="name" type="text" class="w-full" v-model="form.name" />
-                            <InputError :message="form.errors.name" class="mt-1" />
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="address" value="Address" />
-                            <TextInput id="address" type="text" class="w-full" v-model="form.address" />
-                            <InputError :message="form.errors.address" class="mt-1" />
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="number" value="Number" />
-                            <TextInput id="number" type="number" class="w-full" v-model="form.number" />
-                            <InputError :message="form.errors.number" class="mt-1" />
-                        </div>
-
-                        <div class="mt-10 px-5 flex justify-end gap-3">
-                            <SecondaryButton @click="showModal = false">Cancel</SecondaryButton>
-                            <PrimaryButton type="submit">Add new customer</PrimaryButton>
-                        </div>
-                    </form>
+                <div class="w-full px-5 hidden">
+                    <InputLabel for="processed_by" value="Processed by" />
+                    <TextInput id="processed_by" type="text" class="w-full read-only:text-gray-500"
+                        v-model="createForm.processed_by" :value="$page.props.user.name" />
+                    <InputError :message="createForm.errors.processed_by" class="mt-1" />
                 </div>
-            </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="name" value="Name" />
+                    <TextInput id="name" type="text" class="w-full" v-model="createForm.name" />
+                    <InputError :message="createForm.errors.name" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="clothe_types" value="Type of clothes" />
+                    <TextInput id="clothe_types" type="text" class="w-full" v-model="createForm.clothe_types" />
+                    <InputError :message="createForm.errors.clothe_types" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="weight" value="weight" />
+                    <TextInput id="weight" type="number" class="w-full" v-model="createForm.weight" />
+                    <InputError :message="createForm.errors.weight" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="total" value="Total" />
+                    <TextInput id="total" type="number" class="w-full" v-model="createForm.total" />
+                    <InputError :message="createForm.errors.total" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="status" value="Status" />
+                    <TextInput id="status" type="text" class="w-full" v-model="createForm.status" />
+                    <InputError :message="createForm.errors.status" class="mt-1" />
+                </div>
+
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showCreateModal = false">Cancel</SecondaryButton>
+                    <PrimaryButton type="submit">Save</PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+
+        <Modal :show="showUpdateModal">
+            <form @submit.prevent="onUpdateSubmit" class="p-5 flex flex-col gap-3">
+                <div class="my-5 text-xl text-center font-bold uppercase">Update {{ updateForm.name }}'s schedule</div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="name" value="Name" />
+                    <TextInput id="name" type="text" class="w-full" v-model="updateForm.name" />
+                    <InputError :message="updateForm.errors.name" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="clothe_types" value="Type of clothes" />
+                    <TextInput id="clothe_types" type="text" class="w-full" v-model="updateForm.clothe_types" />
+                    <InputError :message="updateForm.errors.clothe_types" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="weight" value="weight" />
+                    <TextInput id="weight" type="number" class="w-full" v-model="updateForm.weight" />
+                    <InputError :message="updateForm.errors.weight" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="total" value="Total" />
+                    <TextInput id="total" type="number" class="w-full" v-model="updateForm.total" />
+                    <InputError :message="updateForm.errors.total" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="status" value="Status" />
+                    <TextInput id="status" type="text" class="w-full" v-model="updateForm.status" />
+                    <InputError :message="updateForm.errors.status" class="mt-1" />
+                </div>
+
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showUpdateModal = false">Cancel</SecondaryButton>
+                    <PrimaryButton type="submit">Save</PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+
+
+        <Modal :show="showDeleteModal">
+            <form @submit.prevent="onDeleteSubmit" class="p-5 flex flex-col gap-3">
+                <div class="mt-10 text-center flex items-center justify-center gap-3">
+                    <div
+                        class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    Do you really want to delete {{ updateForm.name }}'s account?
+                </div>
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showDeleteModal = false">No</SecondaryButton>
+                    <PrimaryButton type="submit">Yes</PrimaryButton>
+                </div>
+            </form>
         </Modal>
     </AppLayout>
 </template>
@@ -162,28 +230,76 @@ defineProps({
     'transacts': Array,
 })
 
-const showCreateModal = ref(false);
-
-const openModal = () => {
-    form.reset();
-    showModal.value = true;
-}
-
-const form = useForm({
+const createForm = useForm({
+    processed_by: "",
     name: "",
-    address: "",
-    number: "",
-    current_transaction: "",
+    clothe_types: "",
+    weight: "",
+    total: "",
+    status: "",
 });
 
-const onSubmit = () => {
-    form.post(route('customers.store'), {
+const updateForm = useForm({
+    name: "",
+    clothe_types: "",
+    weight: "",
+    total: "",
+    status: "",
+});
+
+const showCreateModal = ref(false);
+
+const openCreateModal = () => {
+    createForm.reset();
+    showCreateModal.value = true;
+}
+
+const onCreateSubmit = () => {
+    createForm.post(route('transacts.store'), {
         onSuccess: () => {
-            form.reset();
-            showModal.value = false;
+            createForm.reset();
+            showCreateModal.value = false;
         }
     });
 };
+
+const showUpdateModal = ref(false);
+
+const openUpdateModal = (transact) => {
+    updateForm.reset();
+    showUpdateModal.value = true;
+    updateForm.name = transact.name;
+    updateForm.clothe_types = transact.clothe_types;
+    updateForm.weight = transact.weight;
+    updateForm.total = transact.total;
+    updateForm.status = transact.status;
+}
+
+const onUpdateSubmit = () => {
+    updateForm.put(route('transacts.update', [transact.id]), {
+        onSuccess: () => {
+            updateForm.reset();
+            showUpdateModal.value = false;
+        }
+    });
+};
+
+const showDeleteModal = ref(false);
+
+const openDeleteModal = (transact) => {
+    showDeleteModal.value = true;
+    updateForm.name = transact.name;
+}
+
+const onDeleteSubmit = (transact) => {
+    updateForm.post(route('transacts.destroy'), {
+        onSuccess: () => {
+            showUpdateModal.value = false;
+        }
+    });
+};
+
+
 
 
 </script>

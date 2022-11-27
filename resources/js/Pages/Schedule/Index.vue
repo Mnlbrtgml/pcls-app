@@ -12,8 +12,8 @@
                     <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
                         <div class="flex justify-between items-center py-4 bg-white dark:bg-gray-800">
                             <div class="ml-5">
-                                <PrimaryButton @click="openModal">
-                                    Add new schedule
+                                <PrimaryButton @click="openCreateModal">
+                                    Create schedule
                                 </PrimaryButton>
                             </div>
                             <div class="mr-5">
@@ -58,28 +58,37 @@
                                     <th scope="col" class="p-6 font-bold">
                                         Total
                                     </th>
+                                    <th scope="col" class="p-6 font-bold">
+                                        Action
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="customer in customers" :key="customer.id"
+                                <tr v-for="schedule in schedules" :key="schedule.id"
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td class="p-3 text-center">
-                                        {{ customer.id }}
+                                    <td class="p-3">
+                                        {{ schedule.name }}
                                     </td>
                                     <td class="p-3">
-                                        {{ customer.name }}
-                                    </td>
-                                    <td class="p-3 whitespace-nowrap">
-                                        {{ customer.address }}
+                                        {{ schedule.address }}
                                     </td>
                                     <td class="p-3 text-center">
-                                        {{ customer.number }}
+                                        {{ schedule.number }}
                                     </td>
                                     <td class="p-3 text-center">
-                                        {{ customer.current_transaction }}
+                                        {{ schedule.pickup_date }}
+                                    </td>
+                                    <td class="p-3 text-center">
+                                        {{ schedule.scheduled_date }}
+                                    </td>
+                                    <td class="p-3 text-center">
+                                        {{ schedule.delivered_date }}
+                                    </td>
+                                    <td class="p-3 text-center">
+                                        {{ schedule.total }}
                                     </td>
                                     <td class="py-4 px-6 flex items-center justify-center gap-3">
-                                        <button class="text-blue-500">
+                                        <button class="text-blue-500" @click="openUpdateModal(schedule)">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -88,7 +97,8 @@
                                             </svg>
                                         </button>
 
-                                        <button class="text-red-500">
+                                        <button class="text-red-500" @click="openDeleteModal(schedule)"
+                                            v-if="$page.props.user.permissions.includes('delete schedule')">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -105,12 +115,236 @@
                 </div>
             </div>
         </div>
+
+        <Modal :show="showCreateModal">
+            <form @submit.prevent="onCreateSubmit" class="p-5 flex flex-col gap-3">
+                <div class="my-5 text-xl text-center font-bold uppercase">Create schedule</div>
+
+                <div class="w-full px-5 hidden">
+                    <InputLabel for="processed_by" value="Processed by" />
+                    <TextInput id="processed_by" type="text" class="w-full read-only:text-gray-500"
+                        v-model="createForm.processed_by" :value="$page.props.user.name" />
+                    <InputError :message="createForm.errors.processed_by" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="name" value="Name" />
+                    <TextInput id="name" type="text" class="w-full" v-model="createForm.name" />
+                    <InputError :message="createForm.errors.name" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="address" value="Address" />
+                    <TextInput id="address" type="text" class="w-full" v-model="createForm.address" />
+                    <InputError :message="createForm.errors.address" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="number" value="Number" />
+                    <TextInput id="number" type="number" class="w-full" v-model="createForm.number" />
+                    <InputError :message="createForm.errors.number" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="pickup_date" value="Pickup date" />
+                    <TextInput id="pickup_date" type="datetime-local" class="w-full" v-model="createForm.pickup_date" />
+                    <InputError :message="createForm.errors.pickup_date" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="scheduled_date" value="Scheduled date" />
+                    <TextInput id="scheduled_date" type="datetime-local" class="w-full"
+                        v-model="createForm.scheduled_date" />
+                    <InputError :message="createForm.errors.scheduled_date" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="delivered_date" value="Delivered date" />
+                    <TextInput id="delivered_date" type="datetime-local" class="w-full"
+                        v-model="createForm.delivered_date" />
+                    <InputError :message="createForm.errors.delivered_date" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="total" value="Total" />
+                    <TextInput id="total" type="number" class="w-full" v-model="createForm.total" />
+                    <InputError :message="createForm.errors.total" class="mt-1" />
+                </div>
+
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showCreateModal = false">Cancel</SecondaryButton>
+                    <PrimaryButton type="submit">Save</PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+
+        <Modal :show="showUpdateModal">
+            <form @submit.prevent="onUpdateSubmit" class="p-5 flex flex-col gap-3">
+                <div class="my-5 text-xl text-center font-bold uppercase">Update {{ updateForm.name }}'s schedule</div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="name" value="Name" />
+                    <TextInput id="name" type="text" class="w-full" v-model="updateForm.name" />
+                    <InputError :message="updateForm.errors.name" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="address" value="Address" />
+                    <TextInput id="address" type="text" class="w-full" v-model="updateForm.address" />
+                    <InputError :message="updateForm.errors.address" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="number" value="Number" />
+                    <TextInput id="number" type="number" class="w-full" v-model="updateForm.number" />
+                    <InputError :message="updateForm.errors.number" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="pickup_date" value="Pickup date" />
+                    <TextInput id="pickup_date" type="datetime-local" class="w-full" v-model="updateForm.pickup_date" />
+                    <InputError :message="updateForm.errors.pickup_date" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="scheduled_date" value="Scheduled date" />
+                    <TextInput id="scheduled_date" type="datetime-local" class="w-full"
+                        v-model="updateForm.scheduled_date" />
+                    <InputError :message="updateForm.errors.scheduled_date" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="delivered_date" value="Delivered date" />
+                    <TextInput id="delivered_date" type="datetime-local" class="w-full"
+                        v-model="updateForm.delivered_date" />
+                    <InputError :message="updateForm.errors.delivered_date" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="total" value="Total" />
+                    <TextInput id="total" type="number" class="w-full" v-model="updateForm.total" />
+                    <InputError :message="updateForm.errors.total" class="mt-1" />
+                </div>
+
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showUpdateModal = false">Cancel</SecondaryButton>
+                    <PrimaryButton type="submit">Save</PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+
+
+        <Modal :show="showDeleteModal">
+            <form @submit.prevent="onDeleteSubmit" class="p-5 flex flex-col gap-3">
+                <div class="mt-10 text-center flex items-center justify-center gap-3">
+                    <div
+                        class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    Do you really want to delete {{ updateForm.name }}'s account?
+                </div>
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showDeleteModal = false">No</SecondaryButton>
+                    <PrimaryButton type="submit">Yes</PrimaryButton>
+                </div>
+            </form>
+        </Modal>
     </AppLayout>
 </template>
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import Modal from '@/Components/Modal.vue';
+import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+
+import { ref } from 'vue';
+import { useForm } from '@inertiajs/inertia-vue3';
+
+defineProps({
+    'schedules': Array,
+})
+
+const createForm = useForm({
+    processed_by: "",
+    name: "",
+    address: "",
+    number: "",
+    pickup_date: "",
+    scheduled_date: "",
+    delivered_date: "",
+    total: "",
+});
+
+const updateForm = useForm({
+    name: "",
+    address: "",
+    number: "",
+    pickup_date: "",
+    scheduled_date: "",
+    delivered_date: "",
+    total: "",
+});
+
+const showCreateModal = ref(false);
+
+const openCreateModal = () => {
+    createForm.reset();
+    showCreateModal.value = true;
+}
+
+const onCreateSubmit = () => {
+    createForm.post(route('schedules.store'), {
+        onSuccess: () => {
+            createForm.reset();
+            showCreateModal.value = false;
+        }
+    });
+};
+
+const showUpdateModal = ref(false);
+
+const openUpdateModal = (schedule) => {
+    updateForm.reset();
+    showUpdateModal.value = true;
+    updateForm.name = schedule.name;
+    updateForm.address = schedule.address;
+    updateForm.number = schedule.number;
+    updateForm.pickup_date = schedule.pickup_date;
+    updateForm.scheduled_date = schedule.scheduled_date;
+    updateForm.delivered_date = schedule.delivered_date;
+    updateForm.total = schedule.total;
+}
+
+const onUpdateSubmit = () => {
+    updateForm.put(route('schedules.update', [schedule.id]), {
+        onSuccess: () => {
+            updateForm.reset();
+            showUpdateModal.value = false;
+        }
+    });
+};
+
+const showDeleteModal = ref(false);
+
+const openDeleteModal = (schedule) => {
+    showDeleteModal.value = true;
+    updateForm.name = schedule.name;
+}
+
+const onDeleteSubmit = (schedule) => {
+    updateForm.post(route('schedules.destroy'), {
+        onSuccess: () => {
+            showUpdateModal.value = false;
+        }
+    });
+};
 
 </script>
 

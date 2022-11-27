@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class TransactController extends Controller
@@ -41,7 +42,6 @@ class TransactController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'processed_by' => 'required',
             'name' => 'required',
             'clothe_types' => 'required',
             'weight' => 'required|numeric',
@@ -91,7 +91,7 @@ class TransactController extends Controller
      */
     public function update(Request $request, Transact $transact)
     {
-        //
+        
     }
 
     /**
@@ -102,6 +102,6 @@ class TransactController extends Controller
      */
     public function destroy(Transact $transact)
     {
-        //
+        
     }
 }

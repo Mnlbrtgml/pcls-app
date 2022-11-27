@@ -50,24 +50,28 @@ const logout = () => {
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')"
+                                    v-if="$page.props.user.permissions.includes('read dashboard')">
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('transacts.index')" :active="route().current('transacts.index')">
+                                <NavLink :href="route('transacts.index')" :active="route().current('transacts.index')"
+                                    v-if="$page.props.user.permissions.includes('read transaction')">
                                     Transact
                                 </NavLink>
-                                <NavLink :href="route('schedules.index')" :active="route().current('schedules.index')">
+                                <NavLink :href="route('schedules.index')" :active="route().current('schedules.index')"
+                                    v-if="$page.props.user.permissions.includes('read schedule')">
                                     Schedule
                                 </NavLink>
-                                <NavLink :href="route('customers.index')" :active="route().current('customers.index')">
+                                <NavLink :href="route('customers.index')" :active="route().current('customers.index')"
+                                    v-if="$page.props.user.permissions.includes('read customer')">
                                     Customer
                                 </NavLink>
                                 <NavLink :href="route('users.index')" :active="route().current('users.index')"
-                                    v-if="$page.props.user.role.includes('admin')">
+                                    v-if="$page.props.user.permissions.includes('read user')">
                                     User
                                 </NavLink>
                                 <NavLink :href="route('reports.index')" :active="route().current('reports.index')"
-                                    v-if="$page.props.user.role.includes('admin')">
+                                    v-if="$page.props.user.permissions.includes('read report')">
                                     Report
                                 </NavLink>
                             </div>

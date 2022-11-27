@@ -12,8 +12,8 @@
                     <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
                         <div class="flex justify-between items-center py-4 bg-white dark:bg-gray-800">
                             <div class="ml-5">
-                                <PrimaryButton @click="openAddModal">
-                                    Add new account
+                                <PrimaryButton @click="openCreateModal">
+                                    Create account
                                 </PrimaryButton>
                             </div>
                             <div class="mr-5">
@@ -64,7 +64,7 @@
                                         {{ user.email }}
                                     </td>
                                     <td class="py-4 px-6 flex items-center justify-center gap-3">
-                                        <button class="text-blue-500">
+                                        <button class="text-blue-500" @click="openUpdateModal(user)">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -73,7 +73,7 @@
                                             </svg>
                                         </button>
 
-                                        <button class="text-red-500">
+                                        <button class="text-red-500" @click="openDeleteModal(user)">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -91,106 +91,112 @@
             </div>
         </div>
 
-        <Modal :show="showAddModal">
-            <div>
-                <div>
-                    <form @submit.prevent="onAddSubmit" class="p-5 flex flex-col gap-4">
+        <Modal :show="showCreateModal">
+            <form @submit.prevent="onCreateSubmit" class="p-5 flex flex-col gap-3">
+                <div class="my-5 text-xl text-center font-bold uppercase">Create transaction</div>
 
-                        <div class="my-5 text-xl text-center font-bold">Create new user</div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="name" value="Name" />
-                            <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required
-                                autofocus autocomplete="name" />
-                            <InputError class="mt-2" :message="form.errors.name" />
-                        </div>
-
-                        <div class="w-full px-5 flex">
-                            <label class="flex items-center">
-                                <Checkbox v-model:checked="form.role" name="role" />
-                                <span class="ml-2 text-sm text-gray-600">Admin</span>
-                            </label>
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="email" value="Email" />
-                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full"
-                                required />
-                            <InputError class="mt-2" :message="form.errors.email" />
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="password" value="Password" />
-                            <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full"
-                                required autocomplete="new-password" />
-                            <InputError class="mt-2" :message="form.errors.password" />
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="password_confirmation" value="Confirm Password" />
-                            <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
-                                class="mt-1 block w-full" required autocomplete="new-password" />
-                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
-                        </div>
-
-                        <div class="mt-10 px-5 flex justify-end gap-3">
-                            <SecondaryButton @click="showAddModal = false">Cancel</SecondaryButton>
-                            <PrimaryButton type="submit">Add new user</PrimaryButton>
-                        </div>
-                    </form>
+                <div class="w-full px-5">
+                    <InputLabel for="name" value="Name" />
+                    <TextInput id="name" type="text" class="w-full" v-model="createForm.name" />
+                    <InputError :message="createForm.errors.name" class="mt-1" />
                 </div>
-            </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="role" value="Role" />
+                    <TextInput id="role" type="text" class="w-full" v-model="createForm.role" />
+                    <InputError :message="createForm.errors.role" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="email" value="Email" />
+                    <TextInput id="email" type="email" class="w-full" v-model="createForm.email" />
+                    <InputError :message="createForm.errors.email" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="password" value="Password" />
+                    <TextInput id="password" type="password" class="w-full" v-model="createForm.password" />
+                    <InputError :message="createForm.errors.password" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="password" value="Confirm password" />
+                    <TextInput id="password" type="password" class="w-full" v-model="createForm.password" />
+                    <InputError :message="createForm.errors.password" class="mt-1" />
+                </div>
+
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showCreateModal = false">Cancel</SecondaryButton>
+                    <PrimaryButton type="submit">Save</PrimaryButton>
+                </div>
+            </form>
         </Modal>
 
-        <Modal :show="showEditModal">
-            <div>
-                <div>
-                    <form @submit.prevent="onAddSubmit" class="p-5 flex flex-col gap-4">
+        <Modal :show="showUpdateModal">
+            <form @submit.prevent="onUpdateSubmit" class="p-5 flex flex-col gap-3">
+                <div class="my-5 text-xl text-center font-bold uppercase">Update {{ updateForm.name }}'s schedule</div>
 
-                        <div class="my-5 text-xl text-center font-bold">Edit</div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="name" value="Name" />
-                            <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required
-                                autofocus autocomplete="name" />
-                            <InputError class="mt-2" :message="form.errors.name" />
-                        </div>
-
-                        <div class="w-full px-5 flex">
-                            <label class="flex items-center">
-                                <Checkbox v-model:checked="form.role" name="role" />
-                                <span class="ml-2 text-sm text-gray-600">Role</span>
-                            </label>
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="email" value="Email" />
-                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full"
-                                required />
-                            <InputError class="mt-2" :message="form.errors.email" />
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="password" value="Password" />
-                            <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full"
-                                required autocomplete="new-password" />
-                            <InputError class="mt-2" :message="form.errors.password" />
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="password_confirmation" value="Confirm Password" />
-                            <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
-                                class="mt-1 block w-full" required autocomplete="new-password" />
-                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
-                        </div>
-
-                        <div class="mt-10 px-5 flex justify-end gap-3">
-                            <SecondaryButton @click="showAddModal = false">Cancel</SecondaryButton>
-                            <PrimaryButton type="submit">Add new user</PrimaryButton>
-                        </div>
-                    </form>
+                <div class="w-full px-5">
+                    <InputLabel for="name" value="Name" />
+                    <TextInput id="name" type="text" class="w-full" v-model="updateForm.name" />
+                    <InputError :message="updateForm.errors.name" class="mt-1" />
                 </div>
-            </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="role" value="Role" />
+                    <TextInput id="role" type="text" class="w-full" v-model="updateForm.role" />
+                    <InputError :message="updateForm.errors.role" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="email" value="Email" />
+                    <TextInput id="email" type="email" class="w-full" v-model="updateForm.email" />
+                    <InputError :message="updateForm.errors.email" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="password" value="Old password" />
+                    <TextInput id="password" type="password" class="w-full" v-model="updateForm.password" />
+                    <InputError :message="updateForm.errors.password" class="mt-1" />
+                </div>
+                
+                <div class="w-full px-5">
+                    <InputLabel for="password" value="New password" />
+                    <TextInput id="password" type="password" class="w-full" v-model="updateForm.password" />
+                    <InputError :message="updateForm.errors.password" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="password" value="Confirm password" />
+                    <TextInput id="password" type="password" class="w-full" v-model="updateForm.password" />
+                    <InputError :message="updateForm.errors.password" class="mt-1" />
+                </div>
+
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showUpdateModal = false">Cancel</SecondaryButton>
+                    <PrimaryButton type="submit">Save</PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+
+
+        <Modal :show="showDeleteModal">
+            <form @submit.prevent="onDeleteSubmit" class="p-5 flex flex-col gap-3">
+                <div class="mt-10 text-center flex items-center justify-center gap-3">
+                    <div
+                        class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    Do you really want to delete {{ updateForm.name }}'s account?
+                </div>
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showDeleteModal = false">No</SecondaryButton>
+                    <PrimaryButton type="submit">Yes</PrimaryButton>
+                </div>
+            </form>
         </Modal>
     </AppLayout>
 </template>
@@ -203,8 +209,6 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import Checkbox from '@/Components/Checkbox.vue';
 
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/inertia-vue3';
@@ -213,26 +217,67 @@ defineProps({
     'users': Array,
 })
 
-const showAddModal = ref(false);
-
-const openAddModal = () => {
-    form.reset();
-    showAddModal.value = true;
-}
-
-const form = useForm({
-    name: '',
-    role: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
+const createForm = useForm({
+    name: "",
+    role: "",
+    email: "",
+    password: "",
 });
 
-const onAddSubmit = () => {
-    form.post(route('users.store'), {
+const updateForm = useForm({
+    name: "",
+    role: "",
+    email: "",
+    password: "",
+});
+
+const showCreateModal = ref(false);
+
+const openCreateModal = () => {
+    createForm.reset();
+    showCreateModal.value = true;
+}
+
+const onCreateSubmit = () => {
+    createForm.post(route('users.store'), {
         onSuccess: () => {
-            form.reset('password', 'password_confirmation');
-            showAddModal.value = false;
+            createForm.reset();
+            showCreateModal.value = false;
+        }
+    });
+};
+
+const showUpdateModal = ref(false);
+
+const openUpdateModal = (user) => {
+    updateForm.reset();
+    showUpdateModal.value = true;
+    updateForm.name = user.name;
+    updateForm.role = user.role;
+    updateForm.email = user.email;
+    updateForm.password = user.password;
+}
+
+const onUpdateSubmit = () => {
+    updateForm.put(route('users.update', [user.id]), {
+        onSuccess: () => {
+            updateForm.reset();
+            showUpdateModal.value = false;
+        }
+    });
+};
+
+const showDeleteModal = ref(false);
+
+const openDeleteModal = (user) => {
+    showDeleteModal.value = true;
+    updateForm.name = user.name;
+}
+
+const onDeleteSubmit = (user) => {
+    updateForm.post(route('users.destroy'), {
+        onSuccess: () => {
+            showUpdateModal.value = false;
         }
     });
 };

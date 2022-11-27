@@ -20,7 +20,7 @@ class TransactFactory extends Factory
         return [
 
             'processed_by' => fake()->randomElement(['Administrator', 'Staff']),
-            'name' => fake()->address(),
+            'name' => fake()->name(),
             'clothe_types' => fake()->word(),
             'weight' => fake()->numberBetween(3, 10),
             'total' => fake()->numberBetween(3, 10) * fake()->numberBetween(30, 35),

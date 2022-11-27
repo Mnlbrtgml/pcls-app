@@ -19,10 +19,9 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
                         <ApplicationLogo class="block h-60 w-auto" />
                         <p class="text-xl font-bold uppercase">Giving Happiness <br> Through Cleaning </p>
                         <div class="mt-10">
-                            <!-- <p><span class="font-bold">Shop hours:</span> 8 AM to 6 AM</p>
+                            <p><span class="font-bold">Shop hours:</span> 8 AM to 6 AM</p>
                             <p><span class="font-bold">Telephone number:</span> 431 - 0768</p>
-                            <p><span class="font-bold">Cellphone number:</span> 09650612196 / 09155270769</p> -->
-                            <p class="text-xs"> {{ $page.props }} </p>
+                            <p><span class="font-bold">Cellphone number:</span> 09650612196 / 09155270769</p>
                         </div>
                     </div>
                     <div class="w-1/2 m-10 flex flex-col items-stretch justify-center gap-4">

@@ -12,8 +12,9 @@
                     <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
                         <div class="flex justify-between items-center py-4 bg-white dark:bg-gray-800">
                             <div class="ml-5">
-                                <PrimaryButton @click="openAddModal">
-                                    Add new account
+                                <PrimaryButton @click="openCreateModal"
+                                    v-if="$page.props.user.permissions.includes('create customer')">
+                                    Create account
                                 </PrimaryButton>
                             </div>
                             <div class="mr-5">
@@ -38,9 +39,6 @@
                                 class="text-xs text-gray-700 uppercase text-center bg-blue-50 dark:bg-blue-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" class="p-6 font-bold">
-                                        ID
-                                    </th>
-                                    <th scope="col" class="p-6 font-bold">
                                         Name
                                     </th>
                                     <th scope="col" class="p-6 font-bold">
@@ -60,9 +58,6 @@
                             <tbody>
                                 <tr v-for="customer in customers" :key="customer.id"
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td class="p-3 text-center">
-                                        {{ customer.id }}
-                                    </td>
                                     <td class="p-3">
                                         {{ customer.name }}
                                     </td>
@@ -76,7 +71,7 @@
                                         {{ customer.current_transaction }}
                                     </td>
                                     <td class="py-4 px-6 flex items-center justify-center gap-3">
-                                        <button class="text-blue-500">
+                                        <button class="text-blue-500" @click="openUpdateModal(customer)">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -85,7 +80,8 @@
                                             </svg>
                                         </button>
 
-                                        <button class="text-red-500">
+                                        <button class="text-red-500" @click="openDeleteModal(customer)"
+                                            v-if="$page.props.user.permissions.includes('delete customer')">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -103,39 +99,96 @@
             </div>
         </div>
 
-        <Modal :show="showAddModal">
-            <div>
-                <div>
-                    <form @submit.prevent="onAddSubmit" class="p-5 flex flex-col gap-3">
-                        <!-- <button type="submit">submit</button> -->
+        <Modal :show="showCreateModal">
+            <form @submit.prevent="onCreateSubmit" class="p-5 flex flex-col gap-3">
+                <div class="my-5 text-xl text-center font-bold uppercase">Create transaction</div>
 
-                        <div class="my-5 text-xl text-center font-bold">Create new customer</div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="name" value="Name" />
-                            <TextInput id="name" type="text" class="w-full" v-model="form.name" />
-                            <InputError :message="form.errors.name" class="mt-1" />
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="address" value="Address" />
-                            <TextInput id="address" type="text" class="w-full" v-model="form.address" />
-                            <InputError :message="form.errors.address" class="mt-1" />
-                        </div>
-
-                        <div class="w-full px-5">
-                            <InputLabel for="number" value="Number" />
-                            <TextInput id="number" type="number" class="w-full" v-model="form.number" />
-                            <InputError :message="form.errors.number" class="mt-1" />
-                        </div>
-
-                        <div class="mt-10 px-5 flex justify-end gap-3">
-                            <SecondaryButton @click="showAddModal = false">Cancel</SecondaryButton>
-                            <PrimaryButton type="submit">Add new customer</PrimaryButton>
-                        </div>
-                    </form>
+                <div class="w-full px-5">
+                    <InputLabel for="name" value="Name" />
+                    <TextInput id="name" type="text" class="w-full" v-model="createForm.name" />
+                    <InputError :message="createForm.errors.name" class="mt-1" />
                 </div>
-            </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="address" value="Address" />
+                    <TextInput id="address" type="text" class="w-full" v-model="createForm.address" />
+                    <InputError :message="createForm.errors.address" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="number" value="Number" />
+                    <TextInput id="number" type="number" class="w-full" v-model="createForm.number" />
+                    <InputError :message="createForm.errors.number" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="current_transaction" value="Current transaction" />
+                    <TextInput id="current_transaction" type="text" class="w-full"
+                        v-model="createForm.current_transaction" />
+                    <InputError :message="createForm.errors.current_transaction" class="mt-1" />
+                </div>
+
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showCreateModal = false">Cancel</SecondaryButton>
+                    <PrimaryButton type="submit">Save</PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+
+        <Modal :show="showUpdateModal">
+            <form @submit.prevent="onUpdateSubmit" class="p-5 flex flex-col gap-3">
+                <div class="my-5 text-xl text-center font-bold uppercase">Update {{ updateForm.name }}'s schedule</div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="name" value="Name" />
+                    <TextInput id="name" type="text" class="w-full" v-model="updateForm.name" />
+                    <InputError :message="updateForm.errors.name" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="address" value="Address" />
+                    <TextInput id="address" type="text" class="w-full" v-model="updateForm.address" />
+                    <InputError :message="updateForm.errors.address" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="number" value="Number" />
+                    <TextInput id="number" type="number" class="w-full" v-model="updateForm.number" />
+                    <InputError :message="updateForm.errors.number" class="mt-1" />
+                </div>
+
+                <div class="w-full px-5">
+                    <InputLabel for="current_transaction" value="Current transaction" />
+                    <TextInput id="current_transaction" type="text" class="w-full"
+                        v-model="updateForm.current_transaction" />
+                    <InputError :message="updateForm.errors.current_transaction" class="mt-1" />
+                </div>
+
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showUpdateModal = false">Cancel</SecondaryButton>
+                    <PrimaryButton type="submit">Save</PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+
+
+        <Modal :show="showDeleteModal">
+            <form @submit.prevent="onDeleteSubmit" class="p-5 flex flex-col gap-3">
+                <div class="mt-10 text-center flex items-center justify-center gap-3">
+                    <div
+                        class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    Do you really want to delete {{ updateForm.name }}'s account?
+                </div>
+                <div class="mt-10 px-5 flex justify-end gap-3">
+                    <SecondaryButton @click="showDeleteModal = false">No</SecondaryButton>
+                    <PrimaryButton type="submit">Yes</PrimaryButton>
+                </div>
+            </form>
         </Modal>
     </AppLayout>
 </template>
@@ -156,29 +209,70 @@ defineProps({
     'customers': Array,
 })
 
-const showAddModal = ref(false);
-
-const openAddModal = () => {
-    form.reset();
-    showAddModal.value = true;
-}
-
-const form = useForm({
+const createForm = useForm({
     name: "",
     address: "",
     number: "",
     current_transaction: "",
 });
 
-const onAddSubmit = () => {
-    form.post(route('customers.store'), {
+const updateForm = useForm({
+    name: "",
+    address: "",
+    number: "",
+    current_transaction: "",
+});
+
+const showCreateModal = ref(false);
+
+const openCreateModal = () => {
+    createForm.reset();
+    showCreateModal.value = true;
+}
+
+const onCreateSubmit = () => {
+    createForm.post(route('customers.store'), {
         onSuccess: () => {
-            form.reset();
-            showAddModal.value = false;
+            createForm.reset();
+            showCreateModal.value = false;
         }
     });
 };
 
+const showUpdateModal = ref(false);
+
+const openUpdateModal = (customer) => {
+    updateForm.reset();
+    showUpdateModal.value = true;
+    updateForm.name = customer.name;
+    updateForm.address = customer.address;
+    updateForm.number = customer.number;
+    updateForm.current_transaction = customer.current_transaction;
+}
+
+const onUpdateSubmit = () => {
+    updateForm.put(route('customers.update', [customer.id]), {
+        onSuccess: () => {
+            updateForm.reset();
+            showUpdateModal.value = false;
+        }
+    });
+};
+
+const showDeleteModal = ref(false);
+
+const openDeleteModal = (customer) => {
+    showDeleteModal.value = true;
+    updateForm.name = customer.name;
+}
+
+const onDeleteSubmit = (customer) => {
+    updateForm.post(route('customers.destroy'), {
+        onSuccess: () => {
+            showUpdateModal.value = false;
+        }
+    });
+};
 
 </script>
 

@@ -40,6 +40,9 @@ class RoleSeeder extends Seeder
         $update_user_permission = Permission::create(['name' => 'update user']);
         $delete_user_permission = Permission::create(['name' => 'delete user']);
 
+        $read_dashboard_permission = Permission::create(['name' => 'read dashboard']);
+        $read_report_permission = Permission::create(['name' => 'read report']);
+
 
         $admin_permission_list = [
             $create_transaction_permission,
@@ -57,7 +60,9 @@ class RoleSeeder extends Seeder
             $create_user_permission,
             $read_user_permission,
             $update_user_permission,
-            $delete_user_permission
+            $delete_user_permission,
+            $read_dashboard_permission,
+            $read_report_permission
         ];
         $staff_permission_list = [
             $create_transaction_permission,
@@ -66,7 +71,8 @@ class RoleSeeder extends Seeder
             $create_schedule_permission,
             $read_schedule_permission,
             $update_schedule_permission,
-            $read_customer_permission
+            $read_customer_permission,
+            $read_dashboard_permission
         ];
 
 
