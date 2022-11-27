@@ -10,7 +10,6 @@ class Schedule extends Model
     use HasFactory;
 
     protected $fillable = [
-        'processed_by',
         'name',
         'address',
         'number',

@@ -41,7 +41,6 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'processed_by' => 'required',
             'name' => 'required',
             'address' => 'required',
             'number' => 'required|numeric|digits:11',
@@ -51,13 +50,11 @@ class ScheduleController extends Controller
         ]);
 
         $schedule = new Schedule();
-        $schedule->processed_by = $request->processed_by;
         $schedule->name = $request->name;
         $schedule->address = $request->address;
         $schedule->number = $request->number;
         $schedule->pickup_date = $request->pickup_date;
         $schedule->scheduled_date = $request->scheduled_date;
-        $schedule->delivered_date = $request->delivered_date;
         $schedule->total = $request->total;
         $schedule->save();
 

@@ -17,7 +17,6 @@ class ScheduleFactory extends Factory
     public function definition()
     {
         return [
-            'processed_by' => fake()->randomElement(['Administrator', 'Staff']),
             'name' => fake()->name(),
             'address' => fake()->address(),
             'number' => "09" . fake()->numberBetween(100000000, 999999999),

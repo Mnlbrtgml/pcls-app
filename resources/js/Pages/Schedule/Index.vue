@@ -152,13 +152,6 @@
                 </div>
 
                 <div class="w-full px-5">
-                    <InputLabel for="delivered_date" value="Delivered date" />
-                    <TextInput id="delivered_date" type="datetime-local" class="w-full"
-                        v-model="createForm.delivered_date" />
-                    <InputError :message="createForm.errors.delivered_date" class="mt-1" />
-                </div>
-
-                <div class="w-full px-5">
                     <InputLabel for="total" value="Total" />
                     <TextInput id="total" type="number" class="w-full" v-model="createForm.total" />
                     <InputError :message="createForm.errors.total" class="mt-1" />
