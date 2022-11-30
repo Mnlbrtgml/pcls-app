@@ -40,8 +40,9 @@ Route::middleware([
     Route::get('/schedules', [ScheduleController::class, 'Index'])->name('schedules.index');
     Route::post('/schedules/store', [ScheduleController::class, 'store'])->name('schedules.store');
 
-    Route::get('/customers', [CustomerController::class, 'Index'])->name('customers.index');
-    Route::post('/customers/store', [CustomerController::class, 'store'])->name('customers.store');
+    // Route::get('/customers', [CustomerController::class, 'Index'])->name('customers.index');
+    // Route::post('/customers/store', [CustomerController::class, 'store'])->name('customers.store');
+    Route::resource('/customers', CustomerController::class);
 
     Route::get('/users', [UserController::class, 'Index'])->name('users.index');
     Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
