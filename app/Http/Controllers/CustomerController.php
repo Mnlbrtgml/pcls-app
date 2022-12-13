@@ -87,6 +87,21 @@ class CustomerController extends Controller
     public function update(Request $request, Customer $customer)
     {
         //
+        $request->validate([
+            'name' => 'required|max:255',
+            'address' => 'required',
+            'number' => 'required|numeric|digits:11'
+        ]);
+
+        $customer->update(
+            [
+                'name' => $request->name,
+                'address' => $request->address,
+                'number' => $request->number,
+            ]
+        );
+
+        return back();
     }
 
     /**
@@ -98,5 +113,7 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         //
+        $customer->delete();
+        return back();
     }
 }
